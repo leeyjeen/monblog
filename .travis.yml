@@ -1,0 +1,28 @@
+git:
+branches:
+addons:
+  apt:
+    packages:
+      - python3-dev
+      - python3-pip
+
+language: go
+go:
+  - "1.12"
+
+os: linux
+dist: trusty
+
+before_install:
+  - export PATH=$PATH:$HOME/.local/bin
+  - export GIN_MODE=debug
+  - go env
+
+jobs:
+  include:
+    - stage: Test
+      if: tag IS blank
+      env:
+        - GO111MODULE=on
+      script:
+        - make test

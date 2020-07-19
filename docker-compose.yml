@@ -1,0 +1,40 @@
+version: '3.6'
+
+services:
+  monblog-db:
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
+    ports:
+      - 3306:3306
+    networks:
+      - monblog-net
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=dbwls123!
+      - MYSQL_DATABASE=monblog
+    volumes:
+      - ~/monblog-db:/var/lib/mysql
+    restart: always
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci']
+  monblog:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    networks:
+      - monblog-net
+    environment:
+      - DB_NAME=monblog
+      - DB_USER=root
+      - DB_PW=dbwls123!
+      - DB_HOST=monblog-db
+      - DB_PORT=3306
+      - PORT=8081
+    restart: always
+    depends_on:
+      - monblog-db
+
+networks:
+  monblog-net:

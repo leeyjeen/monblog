@@ -13,6 +13,10 @@ type UserPresenter interface {
 type userPresenter struct {
 }
 
+func NewUserPresenter() UserPresenter {
+	return &userPresenter{}
+}
+
 // ResponseUsers handles user data before passing it to view
 func (up *userPresenter) ResponseUsers(users []*model.User) []*model.User {
 	for _, u := range users {

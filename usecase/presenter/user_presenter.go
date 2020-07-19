@@ -7,5 +7,5 @@ import (
 
 // UserPresenter this is user presenter interface
 type UserPresenter interface {
-	ResponseUsers(users []*model.Users) []*model.User
+	ResponseUsers(users []*model.User) []*model.User
 }

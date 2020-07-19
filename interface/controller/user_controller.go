@@ -11,7 +11,7 @@ import (
 
 // UserController this is user controller interface
 type UserController interface {
-	GetUsers(c *gin.Context) error
+	GetUsers(c *gin.Context)
 }
 
 type userController struct {
@@ -22,13 +22,13 @@ func NewUserController(ui interactor.UserInteractor) UserController {
 	return &userController{ui}
 }
 
-func (uc *userController) GetUsers(c *gin.Context) error {
+func (uc *userController) GetUsers(c *gin.Context) {
 	var u []*model.User
 
 	u, err := uc.userInteractor.Get(u)
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, u)
 }
