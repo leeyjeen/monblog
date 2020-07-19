@@ -1,5 +1,11 @@
 git:
+  submodules: true
+  depth: 2
+  
 branches:
+  except:
+    - docs
+    
 addons:
   apt:
     packages:
