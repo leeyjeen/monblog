@@ -2,15 +2,36 @@ package datastore
 
 /* Frameworks and Drives Layer */
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
+
+	"gopkg.in/gormigrate.v1"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
 
-func NewDB() *gorm.DB {
+type dbManager struct {
+}
+
+type DBManager interface {
+	Connect() *gorm.DB
+	Close(db *gorm.DB) error
+	Migrate(db *gorm.DB, migrations []*gormigrate.Migration) error
+}
+
+func NewDBManager() (DBManager, error) {
+	var m DBManager = &dbManager{}
+	val, ok := m.(DBManager)
+	if !ok {
+		return nil, errors.New("NewDBManager() : invalid structure")
+	}
+	return val, nil
+}
+
+func (m *dbManager) Connect() *gorm.DB {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PW")
 	host := os.Getenv("DB_HOST")
@@ -24,4 +45,14 @@ func NewDB() *gorm.DB {
 	}
 
 	return db
+}
+
+func (m *dbManager) Close(db *gorm.DB) error {
+	return db.Close()
+}
+
+func (m *dbManager) Migrate(db *gorm.DB, migrations []*gormigrate.Migration) error {
+	db.LogMode(true)
+	gm := gormigrate.New(db, gormigrate.DefaultOptions, migrations)
+	return gm.Migrate()
 }

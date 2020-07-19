@@ -5,17 +5,27 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"github.com/leeyjeen/monblog/infrastructure/datastore"
 	r "github.com/leeyjeen/monblog/infrastructure/router"
 	"github.com/leeyjeen/monblog/registry"
 )
 
-var router *gin.Engine
+var (
+	router *gin.Engine
+	db     *gorm.DB
+)
 
 func main() {
-	db := datastore.NewDB()
-	db.LogMode(true)
-	defer db.Close()
+	dbManager, err := datastore.NewDBManager()
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	db = dbManager.Connect()
+	defer dbManager.Close(db)
+	if err := dbManager.Migrate(db, Migrations); err != nil {
+		log.Fatalf("%v", err)
+	}
 
 	regi := registry.NewRegistry(db)
 
