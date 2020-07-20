@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"gopkg.in/gormigrate.v1"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"gopkg.in/gormigrate.v1"
 )
 
 type dbManager struct {
